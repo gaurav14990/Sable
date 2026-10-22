@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import GlowCursor from './ui/GlowCursor';
-
+import ComponentCard from './ui/ComponentsCard';
 export default function ComponentsPage() {
   const navigate = useNavigate();
 
@@ -69,9 +69,23 @@ export default function ComponentsPage() {
             ← Back
           </button>
         </div>
-        <p style={{ opacity: 0.5, fontSize: '0.9rem', letterSpacing: '0.1em' }}>
+        {/* <p style={{ opacity: 0.5, fontSize: '0.9rem', letterSpacing: '0.1em' }}>
           Component library — coming soon.
-        </p>
+        </p> */}
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+            gap: '1rem',
+          }}
+        >
+          <ComponentCard
+            title="Glow Cursor"
+            description="Cursor trail with glow and click burst."
+            onClick={() => navigate('/components/glow-cursor')}
+          />
+        </div>
       </div>
     </GlowCursor>
   );
