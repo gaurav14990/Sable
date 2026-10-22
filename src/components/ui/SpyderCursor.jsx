@@ -88,63 +88,63 @@ export function SpiderCursor() {
       }
     }
 
-    const spiders = many(2, spawn)
+    const spiders=many(2, spawn)
 
-    const handlePointerMove = (e) => {
-      spiders.forEach((spider) => {
+    const handlePointerMove=(e)=>{
+      spiders.forEach((spider)=>{
         spider.follow(e.clientX, e.clientY)
       })
     }
 
     function anim(t) {
-      if (w !== window.innerWidth) w = canvas.width = window.innerWidth
-      if (h !== window.innerHeight) h = canvas.height = window.innerHeight
-      ctx.fillStyle = "#000"
+      if(w!==window.innerWidth) w=canvas.width=window.innerWidth
+      if(h!==window.innerHeight) h=canvas.height=window.innerHeight
+      ctx.fillStyle="#000"
       drawCircle(0, 0, w * 10)
-      ctx.fillStyle = ctx.strokeStyle = "#fff"
+      ctx.fillStyle=ctx.strokeStyle="#fff"
       t /= 1000
-      spiders.forEach((spider) => spider.tick(t))
+      spiders.forEach((spider)=>spider.tick(t))
       requestAnimationFrame(anim)
     }
 
-    function rnd(x = 1, dx = 0) {
-      return Math.random() * x + dx
+    function rnd(x=1, dx=0) {
+      return Math.random()*x + dx
     }
 
-    function drawCircle(x, y, r) {
+    function drawCircle(x,y,r) {
       ctx.beginPath()
       ctx.ellipse(x, y, r, r, 0, 0, PI * 2)
       ctx.fill()
     }
 
-    function drawLine(x0, y0, x1, y1) {
+    function drawLine(x0,y0,x1,y1) {
       ctx.beginPath()
       ctx.moveTo(x0, y0)
       many(100, (i) => {
-        i = (i + 1) / 100
-        const x = lerp(x0, x1, i)
-        const y = lerp(y0, y1, i)
-        const k = noise(x / 5 + x0, y / 5 + y0) * 2
+        i=(i + 1) / 100
+        const x=lerp(x0, x1, i)
+        const y=lerp(y0, y1, i)
+        const k=noise(x / 5 + x0, y / 5 + y0) * 2
         ctx.lineTo(x + k, y + k)
       })
       ctx.stroke()
     }
 
-    function many(n, f) {
+    function many(n,f) {
       return [...Array(n)].map((_, i) => f(i))
     }
 
-    function lerp(a, b, t) {
+    function lerp(a,b,t) {
       return a + (b - a) * t
     }
 
-    function noise(x, y, t = 101) {
-      const w0 = sin(0.3 * x + 1.4 * t + 2.0 + 2.5 * sin(0.4 * y + -1.3 * t + 1.0))
-      const w1 = sin(0.2 * y + 1.5 * t + 2.8 + 2.3 * sin(0.5 * x + -1.2 * t + 0.5))
+    function noise(x,y,t=101) {
+      const w0=sin(0.3*x + 1.4*t + 2.0 + 2.5*sin(0.4*y + -1.3*t + 1.0))
+      const w1=sin(0.2*y + 1.5*t + 2.8 + 2.3*sin(0.5*x + -1.2*t + 0.5))
       return w0 + w1
     }
 
-    function pt(x, y) {
+    function pt(x,y) {
       return { x, y }
     }
 

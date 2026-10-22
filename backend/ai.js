@@ -13,8 +13,8 @@ DESIGN RULES (mandatory):
 9. Make it fully responsive — mobile-first, using flexbox/grid, with sensible breakpoints (@media max-width: 768px).
 10. Avoid generic stock phrases like "Welcome to our website" or "Lorem ipsum" — write real, specific, compelling copy relevant to what the user described.
 Never output a plain white Bootstrap-looking page with default fonts and no animation. That is a failure. Every output should look production-ready and portfolio-worthy.`
-async function openaiCall(url, key, model, messages) {
-  const res = await fetch(url, {
+async function openaiCall(url,key,model,messages) {
+  const res=await fetch(url, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${key}`,
@@ -22,9 +22,9 @@ async function openaiCall(url, key, model, messages) {
     },
     body: JSON.stringify({ model, messages, max_tokens: 8192 })
   })
-  if (!res.ok) {
+  if(!res.ok) {
     const err = await res.json().catch(() => ({}))
-    console.error(`[${model}] ${res.status}:`, err?.error?.message || '')
+    console.error(`[${model}] ${res.status}:`, err?.error?.message||'')
     throw new Error(`${res.status}`)
   }
   const data = await res.json()

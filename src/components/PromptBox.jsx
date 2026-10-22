@@ -13,49 +13,32 @@ const FALLBACK_MODELS = [
 ]
 
 export default function PromptBox({ isDarkMode = true }) {
-  const [prompt, setPrompt] = useState('');
-  const [models, setModels] = useState(FALLBACK_MODELS)
-  const [selectedModel, setSelectedModel] = useState('groq-gpt120b')
+  const [prompt,setPrompt] = useState('');
+  const [models, setModels]=useState(FALLBACK_MODELS)
+  const [selectedModel,setSelectedModel] = useState('groq-gpt120b')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate();
-//yeh vala local ke liye tha 
-  // useEffect(() => {
-  //   fetch('http://localhost:3001/models')
-  //     .then(r => r.json())
-  //     .then(data => {
-  //       if (Array.isArray(data) && data.length) {
-  //         setModels(data);
-  //         setSelectedModel(data[0].id);
-  //       }
-  //     })
-  //     .catch(() => { });
-  // }, [])
-useEffect(() => {
-  const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:3001';
-  fetch(`${API_URL}/models`)
-    .then(r => r.json())
-    .then(data => {
-      if (Array.isArray(data) && data.length) {
-        setModels(data);
-        setSelectedModel(data[0].id);
-      }
-    })
-    .catch(() => {});
-}, [])
-  const selected = models.find((model) => model.id === selectedModel)
-
-  function selectModel(id) {
+  useEffect(() => {
+    const API_URL=import.meta.env.PROD ? '/api' : 'http://localhost:3001';
+    fetch(`${API_URL}/models`)
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length) {
+          setModels(data);
+          setSelectedModel(data[0].id);
+        }
+      })
+      .catch(()=>{});
+  }, [])
+  const selected = models.find((model)=>model.id===selectedModel)
+  function selectModel(id){
     setSelectedModel(id)
     setIsMenuOpen(false)
   }
-
-  // function sendPrompt() {
-  //   console.log('Prompt:', prompt, 'Model:', selectedModel)
-  // }
-  function sendPrompt() {
-  if (!prompt.trim()) return;
-  navigate('/workspace', { state: { prompt, model: selectedModel } });
-}
+  function sendPrompt(){
+    if(!prompt.trim()) return;
+    navigate('/workspace', { state: { prompt, model: selectedModel } });
+  }
   return (
     <section className={`prompt-box ${isDarkMode ? 'dark' : 'light'}`}>
       <textarea

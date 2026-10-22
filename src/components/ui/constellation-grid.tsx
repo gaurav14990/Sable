@@ -78,65 +78,65 @@ export default function ConstellationGrid() {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseleave', handleMouseLeave);
 
-    let lastTime = performance.now();
+    let lastTime=performance.now();
 
     const render = (now: number) => {
-      const dt = Math.min((now - lastTime) / 1000, 0.05);
-      lastTime = now;
+    const dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime=now;
 
-      mouse.vx = (mouse.x - mouse.prevX) / (dt * 1000 || 1);
-      mouse.vy = (mouse.y - mouse.prevY) / (dt * 1000 || 1);
-      mouse.prevX = mouse.x;
-      mouse.prevY = mouse.y;
-      const speed = Math.sqrt(mouse.vx ** 2 + mouse.vy ** 2);
+      mouse.vx=(mouse.x-mouse.prevX)/(dt*1000||1);
+    mouse.vy=(mouse.y-mouse.prevY)/(dt*1000||1);
+      mouse.prevX=mouse.x;
+      mouse.prevY=mouse.y;
+      const speed=Math.sqrt(mouse.vx**2 + mouse.vy**2);
 
-      const bgColor = isDarkMode ? '#030407' : '#ffffffff';
-      const nodeColor = isDarkMode ? '255, 255, 255' : '15, 23, 42';
-      const accentColor = isDarkMode ? '220, 220, 220' : '71, 71, 71';
+      const bgColor=isDarkMode?'#030407':'#fdfdfdff';
+  const nodeColor=isDarkMode?'255, 255, 255':'15, 23, 42';
+      const accentColor=isDarkMode?'220, 220, 220':'71, 71, 71';
 
-      ctx.fillStyle = bgColor;
-      ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle=bgColor;
+      ctx.fillRect(0,0,width,height);
 
-      const SPRING = 18;
-      const DAMP = 0.82;
+      const SPRING=18;
+      const DAMP=0.82;
 
-      for (const n of nodes) {
-        n.pulse += dt * 3;
-        const dx = mouse.x - n.x;
-        const dy = mouse.y - n.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+      for(const n of nodes){
+        n.pulse+=dt*3;
+        const dx=mouse.x-n.x;
+       const dy=mouse.y-n.y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
 
-        if (dist < mouse.radius && dist > 0) {
-          const power = 1 - dist / mouse.radius;
-          const force = power * (1500 + speed * 150);
-          const angle = Math.atan2(dy, dx);
-          n.vx -= Math.cos(angle) * force * dt;
-          n.vy -= Math.sin(angle) * force * dt;
+        if(dist<mouse.radius && dist>0){
+        const power=1-dist/mouse.radius;
+          const force=power*(1500+speed*150);
+          const angle=Math.atan2(dy,dx);
+          n.vx-=Math.cos(angle)*force*dt;
+         n.vy-=Math.sin(angle)*force*dt;
         }
 
-        n.vx += (n.baseX - n.x) * SPRING * dt;
-        n.vy += (n.baseY - n.y) * SPRING * dt;
-        n.vx *= DAMP;
-        n.vy *= DAMP;
-        n.x += n.vx * dt * 60;
-        n.y += n.vy * dt * 60;
+        n.vx+=(n.baseX-n.x)*SPRING*dt;
+        n.vy+=(n.baseY-n.y)*SPRING*dt;
+       n.vx*=DAMP;
+        n.vy*=DAMP;
+        n.x+=n.vx*dt*60;
+        n.y+=n.vy*dt*60;
       }
 
-      const MAX_DIST = 75;
-      const MAX_SQ = MAX_DIST * MAX_DIST;
+      const MAX_DIST=75;
+      const MAX_SQ=MAX_DIST*MAX_DIST;
 
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const sq = dx * dx + dy * dy;
-          if (sq < MAX_SQ) {
-            const d = Math.sqrt(sq);
-            ctx.strokeStyle = `rgba(${nodeColor}, ${(1 - d / MAX_DIST) * (isDarkMode ? 0.18 : 0.08)})`;
-            ctx.lineWidth = 0.7;
+      for(let i=0;i<nodes.length;i++){
+        for(let j=i+1;j<nodes.length;j++){
+         const dx=nodes[i].x-nodes[j].x;
+          const dy=nodes[i].y-nodes[j].y;
+          const sq=dx*dx+dy*dy;
+          if(sq<MAX_SQ){
+            const d=Math.sqrt(sq);
+            ctx.strokeStyle=`rgba(${nodeColor}, ${(1-d/MAX_DIST)*(isDarkMode?0.18:0.08)})`;
+            ctx.lineWidth=0.7;
             ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.moveTo(nodes[i].x,nodes[i].y);
+            ctx.lineTo(nodes[j].x,nodes[j].y);
             ctx.stroke();
           }
         }
