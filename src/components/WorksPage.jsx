@@ -155,27 +155,36 @@ export default function WorksPage() {
                 key={i}
                 onClick={() => setSelected(work)}
                 style={{
-                  background: '#000', border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: '16px', overflow: 'hidden', cursor: 'pointer',
-                  transition: 'border-color 0.2s, transform 0.2s'
+                  background: '#000',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#fff'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.transform = 'translateY(0)'; }}
               >
-                <div style={{ height: '160px', overflow: 'hidden', background: '#fff', pointerEvents: 'none' }}>
+                <div style={{ width: '100%', height: '180px', overflow: 'hidden', background: '#0a0a0f', position: 'relative', pointerEvents: 'none' }}>
                   <iframe
                     title={work.title}
                     srcDoc={work.html}
-                    style={{ width: '100%', height: '100%', border: 'none', transform: 'scale(1)', transformOrigin: 'top left' }}
+                    style={{
+                      position: 'absolute', top: 0, left: 0,
+                      width: '1280px', height: '800px', border: 'none',
+                      transform: 'scale(0.234)', transformOrigin: 'top left'
+                    }}
                     sandbox="allow-scripts"
                   />
                 </div>
-                <div style={{ padding: '1rem' }}>
-                  <h3 style={{ margin: 0, color: '#fff', fontSize: '1rem', fontWeight: 700, fontFamily: 'ui-monospace, monospace' }}>
+                <div style={{ padding: '1.2rem' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#fff', fontFamily: 'ui-monospace, monospace' }}>
                     {work.title}
                   </h3>
-                  <p style={{ margin: '0.3rem 0 0', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, monospace' }}>
-                    {new Date(work.savedAt).toLocaleDateString()}
+                  <p style={{ margin: '0.35rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', fontFamily: 'ui-monospace, monospace' }}>
+                    {new Date(work.savedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </p>
                 </div>
               </div>
