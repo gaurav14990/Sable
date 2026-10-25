@@ -155,8 +155,10 @@ export default function WorksPage() {
                 key={i}
                 onClick={() => setSelected(work)}
                 style={{
-                  background: '#000',
-                  border: '1px solid rgba(255,255,255,0.2)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(255, 255, 255, 0.4)',
                   borderRadius: '16px',
                   overflow: 'hidden',
                   cursor: 'pointer',
@@ -164,8 +166,8 @@ export default function WorksPage() {
                   flexDirection: 'column',
                   transition: 'all 0.2s ease'
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#fff'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#fff'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(255, 255, 255, 0.15)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
               >
                 <div style={{ width: '100%', height: '180px', overflow: 'hidden', background: '#0a0a0f', position: 'relative', pointerEvents: 'none' }}>
                   <iframe
