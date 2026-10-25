@@ -3,23 +3,32 @@ import express from 'express'
 import cors from 'cors'
 import { generate, modelList } from './ai.js'
 
-const app=express()
+const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.get('/models', (req,res) => {
+const handleModels = (req, res) => {
   res.json(modelList)
-})
+}
 
-app.post('/api/generate', async (req,res) => {
-  const { model, history, prompt }=req.body
+const handleGenerate = async (req, res) => {
+  const { model, history, prompt } = req.body
   try {
-    const result=await generate(model, history||[], prompt)
+    const result = await generate(model, history || [], prompt)
     res.json(result)
-  } catch(err) {
+  } catch (err) {
     res.status(500).json({ error: err.message })
   }
-})
-app.listen(process.env.PORT||3001, () => {
-  console.log(`Backend running on port ${process.env.PORT||3001}`)
+}
+
+// Support both routes with and without /api prefix (for local and Vercel serverless rewrites)
+app.get('/models', handleModels)
+app.get('/api/models', handleModels)
+
+app.post('/generate', handleGenerate)
+app.post('/api/generate', handleGenerate)
+
+const port = process.env.PORT || 3001
+app.listen(port, () => {
+  console.log(`Backend running on port ${port}`)
 })

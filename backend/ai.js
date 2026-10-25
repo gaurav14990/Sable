@@ -1,4 +1,5 @@
 import 'dotenv/config'
+
 const SYSTEM = `You are an elite landing page generator used by top design agencies. Your output must look like it was built by a senior designer at a company like Linear, Vercel, or Stripe — never generic, never templated, never boring.
 Return ONLY a single complete HTML file with all CSS and JS embedded inside <style> and <script> tags. No markdown, no explanation, no code fences, no comments outside the code — just raw HTML starting with <!DOCTYPE html>.
 DESIGN RULES (mandatory):
@@ -13,8 +14,20 @@ DESIGN RULES (mandatory):
 9. Make it fully responsive — mobile-first, using flexbox/grid, with sensible breakpoints (@media max-width: 768px).
 10. Avoid generic stock phrases like "Welcome to our website" or "Lorem ipsum" — write real, specific, compelling copy relevant to what the user described.
 Never output a plain white Bootstrap-looking page with default fonts and no animation. That is a failure. Every output should look production-ready and portfolio-worthy.`
-async function openaiCall(url,key,model,messages) {
-  const res=await fetch(url, {
+
+function cleanHtml(raw) {
+  if (!raw) return ''
+  let cleaned = raw.trim()
+  if (cleaned.startsWith('```html')) {
+    cleaned = cleaned.replace(/^```html\s*/i, '').replace(/\s*```$/, '')
+  } else if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```\s*/, '').replace(/\s*```$/, '')
+  }
+  return cleaned.trim()
+}
+
+async function openaiCall(url, key, model, messages) {
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${key}`,
@@ -22,9 +35,9 @@ async function openaiCall(url,key,model,messages) {
     },
     body: JSON.stringify({ model, messages, max_tokens: 8192 })
   })
-  if(!res.ok) {
+  if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    console.error(`[${model}] ${res.status}:`, err?.error?.message||'')
+    console.error(`[${model}] ${res.status}:`, err?.error?.message || err?.message || '')
     throw new Error(`${res.status}`)
   }
   const data = await res.json()
@@ -33,21 +46,39 @@ async function openaiCall(url,key,model,messages) {
 
 async function geminiCall(messages) {
   const text = messages.map(m => `${m.role}: ${m.content}`).join('\n')
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${process.env.GEMINI_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text }] }] })
+  const models = ['gemini-2.5-flash', 'gemini-3.6-flash']
+
+  for (const model of models) {
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text }] }] })
+        }
+      )
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        console.error(`[gemini] ${model} ${res.status}:`, JSON.stringify(err))
+        continue
+      }
+      const data = await res.json()
+      const output = data?.candidates?.[0]?.content?.parts?.[0]?.text
+      if (output) return output
+    } catch (e) {
+      console.error(`[gemini] ${model} error:`, e.message)
     }
-  )
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    console.error(`[gemini] ${res.status}:`, JSON.stringify(err))
-    throw new Error(`${res.status}`)
   }
-  const data = await res.json()
-  return data.candidates[0].content.parts[0].text
+
+  throw new Error('Gemini generation failed')
+}
+
+// Backward compatibility alias map
+const legacyAliasMap = {
+  'nvidia-llama': 'openrouter-llama',
+  'mistral-small': 'mistral-codestral',
+  'mistral-large': 'mistral-7b'
 }
 
 const providers = [
@@ -67,14 +98,14 @@ const providers = [
     fn: (m) => openaiCall('https://api.groq.com/openai/v1/chat/completions', process.env.GROQ_KEY, 'qwen/qwen3.8-27b', m)
   },
   {
-    id: 'mistral-small',
-    label: 'Mistral Small (Mistral)',
-    fn: (m) => openaiCall('https://api.mistral.ai/v1/chat/completions', process.env.MISTRAL_KEY, 'mistral-small-latest', m)
+    id: 'mistral-codestral',
+    label: 'Codestral (Mistral)',
+    fn: (m) => openaiCall('https://api.mistral.ai/v1/chat/completions', process.env.MISTRAL_KEY, 'codestral-latest', m)
   },
   {
-    id: 'mistral-large',
-    label: 'Mistral Large (Mistral)',
-    fn: (m) => openaiCall('https://api.mistral.ai/v1/chat/completions', process.env.MISTRAL_KEY, 'mistral-large-latest', m)
+    id: 'mistral-7b',
+    label: 'Mistral 7B (Mistral)',
+    fn: (m) => openaiCall('https://api.mistral.ai/v1/chat/completions', process.env.MISTRAL_KEY, 'open-mistral-7b', m)
   },
   {
     id: 'gemini-flash',
@@ -87,20 +118,21 @@ const providers = [
     fn: (m) => openaiCall('https://openrouter.ai/api/v1/chat/completions', process.env.OPENROUTER_KEY, 'deepseek/deepseek-chat-v3-0324', m)
   },
   {
-    id: 'nvidia-llama',
-    label: 'Llama 3.3 70B (NVIDIA)',
-    fn: (m) => openaiCall('https://integrate.api.nvidia.com/v1/chat/completions', process.env.NVIDIA_KEY, 'meta/llama-3.3-70b-instruct', m)
+    id: 'openrouter-llama',
+    label: 'Llama 3.3 70B (OpenRouter)',
+    fn: (m) => openaiCall('https://openrouter.ai/api/v1/chat/completions', process.env.OPENROUTER_KEY, 'meta-llama/llama-3.3-70b-instruct', m)
   }
 ]
 
 export async function generate(selectedId, history, prompt) {
+  const targetId = legacyAliasMap[selectedId] || selectedId
   const messages = [
     { role: 'system', content: SYSTEM },
     ...history,
     { role: 'user', content: prompt }
   ]
 
-  const startIndex = providers.findIndex(p => p.id === selectedId)
+  const startIndex = providers.findIndex(p => p.id === targetId)
   const order = [
     ...providers.slice(startIndex === -1 ? 0 : startIndex),
     ...providers.slice(0, startIndex === -1 ? 0 : startIndex)
@@ -109,7 +141,8 @@ export async function generate(selectedId, history, prompt) {
   for (const provider of order) {
     console.log(`Trying: ${provider.label}`)
     try {
-      const html = await provider.fn(messages)
+      const rawHtml = await provider.fn(messages)
+      const html = cleanHtml(rawHtml)
       console.log(`Success: ${provider.label}`)
       return { html, usedProvider: provider.label }
     } catch (e) {

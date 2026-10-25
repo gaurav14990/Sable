@@ -5,11 +5,11 @@ const FALLBACK_MODELS = [
   { id: 'groq-gpt120b', label: 'GPT-OSS 120B (Groq)' },
   { id: 'groq-gpt20b', label: 'GPT-OSS 20B (Groq)' },
   { id: 'groq-qwen', label: 'Qwen 3 27B (Groq)' },
-  { id: 'mistral-small', label: 'Mistral Small' },
-  { id: 'mistral-large', label: 'Mistral Large' },
+  { id: 'mistral-codestral', label: 'Codestral (Mistral)' },
+  { id: 'mistral-7b', label: 'Mistral 7B (Mistral)' },
   { id: 'gemini-flash', label: 'Gemini Flash' },
   { id: 'openrouter-deepseek', label: 'DeepSeek V3' },
-  { id: 'nvidia-llama', label: 'Llama 3.3 70B' },
+  { id: 'openrouter-llama', label: 'Llama 3.3 70B' },
 ]
 
 export default function PromptBox({ isDarkMode = true }) {
