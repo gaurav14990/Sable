@@ -1,6 +1,58 @@
 import { useNavigate } from 'react-router-dom';
 import GlowCursor from './ui/GlowCursor';
 import ComponentCard from './ui/ComponentsCard';
+
+const COMPONENTS_DATA = [
+  {
+    title: 'Glow Cursor',
+    subtitle: 'Animation',
+    link: 'https://reactbits.dev/animations/glow-cursor',
+    image: 'https://reactbits.dev/og/animations/glow-cursor.jpg'
+  },
+  {
+    title: 'CRT Warp',
+    subtitle: 'Background',
+    link: 'https://reactbits.dev/backgrounds/crt-warp',
+    image: 'https://reactbits.dev/og/backgrounds/crt-warp.jpg'
+  },
+  {
+    title: 'Light Tunnel',
+    subtitle: 'Background',
+    link: 'https://reactbits.dev/backgrounds/light-tunnel',
+    image: 'https://reactbits.dev/og/backgrounds/light-tunnel.jpg'
+  },
+  {
+    title: 'Ripple Distortion',
+    subtitle: 'Animation',
+    link: 'https://reactbits.dev/animations/ripple-distortion',
+    image: 'https://reactbits.dev/og/animations/ripple-distortion.jpg'
+  },
+  {
+    title: 'Balatro',
+    subtitle: 'Background',
+    link: 'https://reactbits.dev/backgrounds/balatro',
+    image: 'https://reactbits.dev/og/backgrounds/balatro.jpg'
+  },
+  {
+    title: 'Liquid Chrome',
+    subtitle: 'Background',
+    link: 'https://reactbits.dev/backgrounds/liquid-chrome',
+    image: 'https://reactbits.dev/og/backgrounds/liquid-chrome.jpg'
+  },
+  {
+    title: 'Topography',
+    subtitle: 'Background',
+    link: 'https://reactbits.dev/backgrounds/topography',
+    image: 'https://reactbits.dev/og/backgrounds/topography.jpg'
+  },
+  {
+    title: 'Grid Scan',
+    subtitle: 'Background',
+    link: 'https://reactbits.dev/backgrounds/grid-scan',
+    image: 'https://reactbits.dev/og/backgrounds/grid-scan.jpg'
+  }
+];
+
 export default function ComponentsPage() {
   const navigate = useNavigate();
 
@@ -69,25 +121,26 @@ export default function ComponentsPage() {
             ← Back
           </button>
         </div>
-        {/* <p style={{ opacity: 0.5, fontSize: '0.9rem', letterSpacing: '0.1em' }}>
-          Component library — coming soon.
-        </p> */}
 
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '1rem',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '1.5rem'
           }}
         >
-          <ComponentCard
-            title="Glow Cursor"
-            description="Cursor trail with glow and click burst."
-            onClick={() => navigate('/components/glow-cursor')}
-          />
+          {COMPONENTS_DATA.map((item) => (
+            <ComponentCard
+              key={item.title}
+              title={item.title}
+              subtitle={item.subtitle}
+              image={item.image}
+              link={item.link}
+              onClick={item.path ? () => navigate(item.path) : undefined}
+            />
+          ))}
         </div>
       </div>
     </GlowCursor>
   );
 }
-
