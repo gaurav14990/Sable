@@ -194,6 +194,15 @@ export default function ConstellationGrid() {
         COMPONENTS
       </button>
 
+      <button
+        onClick={() => navigate('/works')}
+        style={{ position: 'absolute', bottom: '1.5rem', left: '9rem', zIndex: 50, background: 'transparent', border: 'none', cursor: 'pointer', color: '#fff', fontFamily: 'ui-monospace, monospace', fontSize: '0.7rem', letterSpacing: '0.15em', opacity: 0.6, textTransform: 'uppercase', padding: 0 }}
+        onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+        onMouseLeave={e => (e.currentTarget.style.opacity = '0.6')}
+      >
+        MY WORKS
+      </button>
+
       {/* light ur Dark mode switch karne ke liye */}
       <ThemeToggle
         isDarkMode={isDarkMode}

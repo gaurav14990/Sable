@@ -44,10 +44,14 @@ const [dots, setDots] = useState('');
           setIsGenerating(false);
           return;
         }
-        setFullCode(data.html);
+        const html = data.html;
+        setFullCode(html);
         setUsedProvider(data.usedProvider);
         setIsGenerating(false);
         setIsTyping(true);
+        const existing = JSON.parse(localStorage.getItem('sable_works') || '[]');
+        existing.push({ title: prompt, html, savedAt: Date.now() });
+        localStorage.setItem('sable_works', JSON.stringify(existing));
       } catch (err) {
         setDisplayedCode(`// Error: ${err.message}`);
         setIsGenerating(false);
