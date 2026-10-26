@@ -101,8 +101,18 @@ function WorkModal({ work, onClose }) {
 export default function WorksPage() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(null);
+  const [works, setWorks] = useState(() => JSON.parse(localStorage.getItem('sable_works') || '[]').reverse());
 
-  const works = JSON.parse(localStorage.getItem('sable_works') || '[]').reverse();
+  const handleDelete = (e, savedAt) => {
+    e.stopPropagation();
+    const raw = JSON.parse(localStorage.getItem('sable_works') || '[]');
+    const updated = raw.filter(w => w.savedAt !== savedAt);
+    localStorage.setItem('sable_works', JSON.stringify(updated));
+    setWorks(updated.slice().reverse());
+    if (selected && selected.savedAt === savedAt) {
+      setSelected(null);
+    }
+  };
 
   return (
     <div style={{ position: 'relative', width: '100vw', minHeight: '100vh', background: '#000' }}>
@@ -152,7 +162,7 @@ export default function WorksPage() {
           }}>
             {works.map((work, i) => (
               <div
-                key={i}
+                key={work.savedAt || i}
                 onClick={() => setSelected(work)}
                 style={{
                   background: 'rgba(255, 255, 255, 0.05)',
@@ -181,13 +191,43 @@ export default function WorksPage() {
                     sandbox="allow-scripts"
                   />
                 </div>
-                <div style={{ padding: '1.2rem' }}>
-                  <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#fff', fontFamily: 'ui-monospace, monospace' }}>
-                    {work.title}
-                  </h3>
-                  <p style={{ margin: '0.35rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', fontFamily: 'ui-monospace, monospace' }}>
-                    {new Date(work.savedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                  </p>
+                <div style={{ padding: '1.2rem', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '0.75rem' }}>
+                  <div style={{ overflow: 'hidden' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#fff', fontFamily: 'ui-monospace, monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {work.title}
+                    </h3>
+                    <p style={{ margin: '0.35rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', fontFamily: 'ui-monospace, monospace' }}>
+                      {new Date(work.savedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </p>
+                  </div>
+                  <button
+                    onClick={(e) => handleDelete(e, work.savedAt)}
+                    title="Delete card"
+                    aria-label="Delete card"
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#ffffff',
+                      opacity: 0.75,
+                      cursor: 'pointer',
+                      padding: '0.35rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.2s ease',
+                      flexShrink: 0
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1.18)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '0.75'; e.currentTarget.style.transform = 'scale(1)'; }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </button>
                 </div>
               </div>
             ))}
