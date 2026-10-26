@@ -33,21 +33,20 @@ export default function Workspace() {
       setFullCode('');
       setDisplayedCode('');
       try {
-        const res = await fetch(
-          `${import.meta.env.PROD ? '/api' : 'http://localhost:3001'}/generate`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model, history: [], prompt }),
-          }
-        );
+        const api = import.meta.env.PROD ? '/api' : 'http://localhost:3001';
+        const res = await fetch(`${api}/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model, history: [], prompt }),
+        });
         const data = await res.json();
-        if (data.error) {
-          setDisplayedCode(`// Error: ${data.error}`);
-          setIsGenerating(false);
-          return;
-        }
-        const html = data.html;
+        if (data.error) throw new Error(data.error);
+        const raw = data.html?.replace(/^```html\s*|^```\s*|```$/g, '').trim() || '';
+        const html = raw
+          .replace(/<!--[\s\S]*?-->/g, '')
+          .replace(/\/\*[\s\S]*?\*\//g, '')
+          .replace(/(^|[ \t])\/\/[^\r\n]*/gm, '$1')
+          .trim();
         setFullCode(html);
         setUsedProvider(data.usedProvider);
         setIsGenerating(false);
@@ -96,6 +95,34 @@ export default function Workspace() {
     }
   }, [displayedCode]);
 
+  // Prevent navbar links from navigating the iframe to the parent app
+  const previewHtml = useMemo(() => {
+    if (!fullCode) return '';
+    const clickGuard = `
+<script>
+document.addEventListener('click', function(e) {
+  var a = e.target.closest('a');
+  if (!a) return;
+  var href = a.getAttribute('href');
+  if (!href || href === '#' || href === '/') {
+    e.preventDefault();
+    return;
+  }
+  if (href.startsWith('#')) {
+    e.preventDefault();
+    var el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  } else if (!href.startsWith('http') && !href.startsWith('mailto:')) {
+    e.preventDefault();
+  }
+}, true);
+</script>
+</body>`;
+    return fullCode.includes('</body>')
+      ? fullCode.replace('</body>', clickGuard)
+      : fullCode + clickGuard;
+  }, [fullCode]);
+
   const handleSkipTyping = () => {
     if (fullCode) {
       setDisplayedCode(fullCode);
@@ -121,16 +148,16 @@ export default function Workspace() {
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
         }}
       >
-        {fullCode ? (
+        {!isTyping && fullCode ? (
           <iframe
             title="preview"
-            srcDoc={fullCode}
-            className="w-full h-full rounded-[20px] bg-white border-0"
-            sandbox="allow-scripts"
+            srcDoc={previewHtml}
+            className="w-full h-full rounded-[20px] bg-[#09090b] border-0"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
           />
         ) : (
           <p className="text-white/40 font-mono text-sm">
-            {isGenerating ? `Building your page${dots}` : 'Output will render here...'}
+            {isGenerating || isTyping ? `Building your page${dots}` : 'Output will render here...'}
           </p>
         )}
       </div>
