@@ -1,0 +1,26 @@
+[
+  {
+    "id": "usr_1793020508334_hmmkv",
+    "name": "Gaurav Chaudhary",
+    "email": "gaurav@example.com",
+    "password": "$2b$10$iqw2kYYVHh682y/euzpOYef0lgwrml2xsFdVsTz74tOH.gk6Fn7pm",
+    "avatar": "https://api.dicebear.com/7.x/identicon/svg?seed=gaurav%40example.com",
+    "createdAt": "2026-10-26T13:15:08.334Z"
+  },
+  {
+    "id": "usr_demo_google_1793020782169",
+    "name": "Elena Vance",
+    "email": "elena.vance@google.demo",
+    "password": "demo_password_not_used",
+    "avatar": "https://api.dicebear.com/7.x/identicon/svg?seed=elena.vance%40google.demo",
+    "createdAt": "2026-10-26T13:19:42.169Z"
+  },
+  {
+    "id": "usr_demo_github_1793020783941",
+    "name": "Alex Rivera",
+    "email": "alex.rivera@github.demo",
+    "password": "demo_password_not_used",
+    "avatar": "https://api.dicebear.com/7.x/identicon/svg?seed=alex.rivera%40github.demo",
+    "createdAt": "2026-10-26T13:19:43.941Z"
+  }
+]
